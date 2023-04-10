@@ -1,0 +1,53 @@
+version: '3.0'
+services:
+  imageserver:  
+      image: ubuntu22-dev:v2
+      environment:
+        - NVIDIA_VISIBLE_DEVICES=all
+        - PYTHONIOENCODING=utf-8
+        - OMP_NUM_THREADS=20
+      volumes:
+        - ${PWD}:/two2three
+        # - /etc/timezone:/etc/timezone:ro 
+        - /etc/localtime:/etc/localtime:ro 
+      working_dir: /two2three
+      network_mode: 'host'
+      pid: "host"
+      ipc: host
+      shm_size: 1gb
+      ulimits:
+        memlock: -1
+        stack: 67108864
+      logging: 
+        driver: "json-file"
+        options: 
+          max-size: "100m"
+      entrypoint: bash -c "cd /two2three && /bin/bash ./go.sh"
+      restart: always
+      container_name: imageserver
+      tty: true
+  nb:  
+      image: ubuntu22-dev:v2
+      environment:
+        - NVIDIA_VISIBLE_DEVICES=all
+        - PYTHONIOENCODING=utf-8
+        - OMP_NUM_THREADS=20
+      volumes:
+        - ${PWD}:/two2three
+        # - /etc/timezone:/etc/timezone:ro 
+        - /etc/localtime:/etc/localtime:ro 
+      working_dir: /two2three
+      network_mode: 'host'
+      pid: "host"
+      ipc: host
+      shm_size: 1gb
+      ulimits:
+        memlock: -1
+        stack: 67108864
+      logging: 
+        driver: "json-file"
+        options: 
+          max-size: "100m"
+      entrypoint: bash -c "cd /two2three && jupyter-notebook   --allow-root --port 8889"
+      restart: always
+      container_name: nb
